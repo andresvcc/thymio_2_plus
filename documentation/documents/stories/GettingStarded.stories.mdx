@@ -1,0 +1,61 @@
+import { Meta, Description } from '@storybook/addon-docs'
+import routerImage from '../assets/router.jpg'
+import internetModes from '../assets/internetModes.png'
+import internetModesNames from '../assets/internetModesNames.png'
+
+
+<Meta 
+  title="Getting Starded"  
+  parameters={{
+    viewMode: 'docs',
+    previewTabs: { 
+      canvas: { hidden: true } 
+     },
+  }}
+/>
+
+# Getting Started with Thymio2+ 
+---
+
+Welcome to your new Thymio2+! This guide will walk you through the initial setup and basic operations to quickly start using your Thymio2+, whether you are a teacher setting up a classroom or a student eager to delve into the world of robotics.
+
+<img src={routerImage} style={{
+  padding: '3rem',
+  marginBottom: '2rem'
+}} />
+
+#### Unboxing and Initial Setup
+1. **Unpack Your Thymio2+**: Open the box and remove the Thymio2+ unit, a micro USB power cable, and a USB dongle necessary for robot connection.
+2. **Power Connection**: Connect the micro USB power cable to the Thymio2+ and plug the other end into a suitable USB power source.
+3. **Check the Indicators**: Make sure the power LED is on, signaling that the device is powered up.
+
+#### Select WiFi Mode
+
+<img src={internetModesNames} style={{padding: '1rem 3rem', maxWidth: '300px' }} />
+<img src={internetModes} style={{padding: '0rem 3rem', maxWidth: '300px'}} />
+
+**Offline Mode**:
+- Activate the Wi-Fi on your tablet, smartphone, or computer.
+- Search for a Wi-Fi network named "Thymio_XXXXXX". Connect using the password provided in the packaging, default is MYTHYMIO.
+- Download the Mobile Thymio Suite app on iOS or Android.
+
+**Online Mode**:
+- Turn on the Wi-Fi on your tablet, smartphone, or computer.
+- Connect to your home or educational institution's local network.
+- Download the Mobile Thymio Suite app on iOS or Android.
+
+#### Accessing the User Interface
+1. **Open a Web Browser**: Start any web browser on a device connected to the Thymio2+ network.
+2. **Enter the Router’s IP Address**: Type the default IP address `http://192.168.8.1/dashboard` into your browser’s address bar.
+3. **Thymio2+ Dashboard Interface**: The user-friendly Dashboard interface of OpenWrt will welcome you.
+4. **Complete the Initial Setup**: Follow the step-by-step setup process found at `http://192.168.8.1/dashboard` to reach the main Dashboard.
+
+#### First Steps in Robotics Programming
+1. **Open the Mobile App**: Use your connected device to access educational resources and programming interfaces through the mobile app.
+2. **Start a Simple Program**: Try out basic commands to make your Thymio robot move or react to sensor inputs.
+
+#### Tips for Success
+- **Regular Updates**: Regularly check for firmware updates to ensure your Thymio2+ operates smoothly.
+- **Community and Support**: Engage with the Thymio online community for additional tips, tricks, and user support.
+
+With your Thymio2+ set up, you are now ready to dive into the captivating world of educational robotics. Embark on your journey into programming and robotics and explore all the exciting possibilities your Thymio2+ has to offer!
