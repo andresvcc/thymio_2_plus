@@ -10,7 +10,7 @@
     "url": "https://github.com/Mobsya/thymio-platform/tree/main/apps/openwrt-config-dashboard"
   },
   "scripts": {
-    "start:dev": "vite --host",
+    "dev": "vite --host",
     "build": "tsc && vite build && cp LICENSE dist/LICENSE",
     "preview": "vite preview",
     "lint": "eslint",

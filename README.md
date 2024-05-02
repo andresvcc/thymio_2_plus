@@ -3,20 +3,20 @@ Thymio platform
 
 # Welcome to the Thymio Platform Turborepo!
 
-The Thymio Platform is an open-source project that provides a comprehensive suite of software tools and libraries for the Thymio robot. This Turborepo serves as a central hub for managing and organizing the various packages, applications, and utilities that make up the Thymio Platform.
+The Thymio_2_plus is an open-source project that provides a comprehensive suite of software tools and libraries for the Thymio robot. This Turborepo serves as a central hub for managing and organizing the various packages, applications, and utilities that make up the Thymio Platform.
 
-With the Thymio Platform Turborepo, developers and enthusiasts have access to a wide range of front-end and back-end applications, along with essential packages for programming, data modeling, and UI component development. The Turborepo follows a monorepo architecture, enabling seamless collaboration and code sharing between different parts of the project.
+With the Thymio_2_plus Turborepo, developers and enthusiasts have access to a wide range of front-end and back-end applications, along with essential packages for programming, data modeling, and UI component development. The Turborepo follows a monorepo architecture, enabling seamless collaboration and code sharing between different parts of the project.
 
 # Documentation
 
-Before diving into the installation process, we highly recommend visiting the [Thymio Platform Documentation](https://mobsya.github.io/thymio-platform/?path=/docs/introduction--page). This comprehensive documentation will provide you with detailed information about the Thymio Suite V3, its features, and how to utilize its capabilities effectively.
+Before diving into the installation process, we highly recommend visiting the [Thymio2+ Documentation](https://mobsya.github.io/thymio-platform/?path=/docs/introduction--page). This comprehensive documentation will provide you with detailed information about the Thymio2+, its features, and how to utilize its capabilities effectively.
 
 
 # Getting Started with Thymio Suite V3 Turborepo
 
 <br />
 
-Welcome to Thymio Suite V3 Turborepo! This guide will help you get started with the installation and basic usage of the monorepo, which includes the Thymio Platform and various packages and apps. Let's get started!
+Welcome to Thymio2+ Turborepo! This guide will help you get started with the installation and basic usage of the monorepo, which includes the Thymio Platform and various packages and apps. Let's get started!
 
 A monorepo is a software development approach where multiple related projects or packages are managed within a single repository. Turborepo is a tool that helps streamline the development process in a monorepo by providing various features and utilities.
 
@@ -30,33 +30,19 @@ A monorepo is a software development approach where multiple related projects or
 
 ## What's Inside?
 
-The Thymio Suite V3 Turborepo consists of the following packages and apps:
+The Thymio2+ Turborepo consists of the following packages and apps:
 
 <br />
 
 ### Front-End Apps
 
-- `web`: A demo [React](https://reactjs.org) app that allows you to test the capabilities of the Thymio Platform.
-
-<br />
-
-### Back-End Apps
-
-- `MS-User`: This microservice manages user-related operations, including authentication, authorization, and user management. It ensures secure access to the system and allows users to personalize their experience.
-- `MS-Observer`: This microservice is responsible for observing and monitoring the state and behavior of the Thymio robots. It provides real-time updates and insights to users.
-- `MS-ACL-MQTT`: This microservice handles access control and authentication for the MQTT brokers. It ensures secure and authorized communication between the robots and the system.
-- `MS-Cycle-Control`:  This microservice controls the communication and coordination between Thymio robots and users. It manages the communication channels, synchronizes program execution, and ensures efficient message passing.
-- `MS-Organisations`: This microservice manages organizations within the system. It handles membership, ownership, and collaboration among users and Thymio robots within organizations.
-- `BFF Users`: This BFF (Backend for Front-End) service serves as an interface proxy, connecting the user interface of the User actor to the microservices.
-- `BFF Robots`: This BFF (Backend for Front-End) service serves as an interface proxy, connecting the user interface of the Thymio robot actor to the microservices.
+- `openwrt-config-dashboard`: This app provides a dashboard for configuring and managing OpenWRT devices into conext of Thymio2+. It allows users to view and modify device settings, monitor network activity, and perform various administrative tasks. 
 
 <br />
 
 ### Packages
 
 - `mobsya-helper`: A programming tool that follows the [SOLID](https://en.wikipedia.org/wiki/SOLID) principles, leveraging an implementation framework based on [Domain-Driven Design (DDD)](https://learn.microsoft.com/en-us/archive/msdn-magazine/2009/february/best-practice-an-introduction-to-domain-driven-design) and formalized through the design of inter-service contracts. This package provides a solid foundation for building robust and maintainable applications.
-
-- `data-model`: This package provides the definitions of classes, types, and contracts that are shared across different applications within the Thymio Suite V3. It promotes code reusability and consistency in data modeling.
 
 - `mobsya-theme`: A [React Native](https://reactnative.dev/) component library that is shared between the `web` and `native` applications. It provides a set of reusable UI components with a consistent and visually appealing design.
 
@@ -79,15 +65,7 @@ yarn install
 This command will fetch and install all the necessary packages and dependencies for Thymio Suite V3.
 <br />
 
-## Start thymio Suite V3
-
-This script starts the Thymio Suite V3 app using Turbo. It launches the app and filters the execution to the specified path ./apps/thymio-suite-v3.
-
-```shell
-yarn start:thymioSV3
-```
-
-## Start thymio Suite V3 in development mode
+## Start thymio2+ in development mode
 
 This script launches the development environment, including Storybook and the test runner, in an interactive watch mode. It runs concurrently, leveraging parallel processing for improved performance. This command is useful during development as it automatically reloads the app and reruns tests whenever changes are detected.
 
