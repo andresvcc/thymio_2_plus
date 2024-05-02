@@ -1,7 +1,7 @@
 Thymio platform
 ===============
 
-# Welcome to the Thymio Platform Turborepo!
+# Welcome to the Thymio2+ Turborepo!
 
 The Thymio_2_plus is an open-source project that provides a comprehensive suite of software tools and libraries for the Thymio robot. This Turborepo serves as a central hub for managing and organizing the various packages, applications, and utilities that make up the Thymio Platform.
 
