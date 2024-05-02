@@ -6,7 +6,7 @@
     "dev:page": "vite",
     "build:page": "tsc && vite build",
     "preview": "vite preview",
-    "build": "build-storybook -s public -o docs && cp -rf docs ../../",
+    "build": "build-storybook -s public -o docs && cp -rf docs ../../ && echo 'copied to ../../docs'",
     "storybook": "start-storybook -p 6006 -s ./public",
     "clean": "rm -rf node_modules && rm -rf dist && rm -rf .turbo",
     "lint": "eslint \"src/**/*.ts\""

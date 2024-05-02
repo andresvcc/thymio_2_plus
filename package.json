@@ -14,8 +14,8 @@
     "mergeTest": "npx junit-merge -d packages --recursive -o documentation/documents/test-results/merged-results.xml --createDir=true && cd ./documentation/documents/ && node mdxParser.mjs",
     "report": "npx junit-viewer --results=documentation/documents/test-results/merged-results.xml --save=documentation/documents/test-results/index.html",
     "test:watch": "turbo run test:watch",
-    "storybook": "turbo run storybook --filter=./documentation/*",
-    "build:storybook": "turbo run build --filter=./documentation/*",
+    "storybook": "turbo run storybook --filter=./documentation/storybook",
+    "build:storybook": "turbo run build --filter=./documentation/storybook",
     "commit": "cz"
   },
   "devDependencies": {
