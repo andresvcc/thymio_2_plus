@@ -101,3 +101,5 @@ Now that you have Thymio Suite V3 Turborepo installed and familiarized yourself 
 We encourage you to join our growing community of developers, users, and collaborators. Share your ideas, projects, and experiences with the community, ask questions, and contribute to the continuous improvement of Thymio Suite V3. Together, we can create a vibrant and inspiring ecosystem for educational robotics.
 
 Happy coding with Thymio Suite V3! Let your imagination and creativity soar as you embark on an exciting journey of educational robotics!
+
+
