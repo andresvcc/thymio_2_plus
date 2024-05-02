@@ -12,7 +12,7 @@ With the Thymio_2_plus Turborepo, developers and enthusiasts have access to a wi
 Before diving into the installation process, we highly recommend visiting the [Documentation](https://andresvcc.github.io/thymio_2_plus/?path=/docs/introduction--page). This comprehensive documentation will provide you with detailed information about the Thymio2+, its features, and how to utilize its capabilities effectively.
 
 
-# Getting Started with Thymio Suite V3 Turborepo
+# Getting Started with Thymio2+ Turborepo
 
 <br />
 
