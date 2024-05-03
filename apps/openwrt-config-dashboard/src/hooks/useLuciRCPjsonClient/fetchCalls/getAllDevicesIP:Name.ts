@@ -1,8 +1,3 @@
-import { LoginTokenResponse } from '@/types';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { act } from 'react-test-renderer';
-import tough, { Cookie } from 'tough-cookie';
-import { t } from 'xstate';
 import { Sid } from '..';
 
 function matchesThymioPattern(str: string): boolean {

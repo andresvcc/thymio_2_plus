@@ -1,6 +1,3 @@
-import { LoginTokenResponse } from '@/types';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import tough, { Cookie } from 'tough-cookie';
 import { Sid } from '..';
 
 function parseStringToJson(inputString: string): any {
