@@ -1,0 +1,324 @@
+import { Meta, Description } from '@storybook/addon-docs'
+
+<Meta
+  title="Hooks/useLuciRPC-JSON-Clien"
+  parameters={{
+    viewMode: 'docs',
+    previewTabs: {
+      canvas: { hidden: true }
+     },
+  }}
+/>
+
+# Documentation on the React Hook for Managing XState Machine State
+
+## Introduction
+
+This document provides a detailed guide on using the React hook for managing the state of an XState machine. This hook allows interacting with a state machine defined using the XState library in React applications.
+
+## Imports and Configuration
+
+The React hook for managing the state of the XState machine is used to connect React components with state machines defined in XState. First, we import the necessary functions and tools:
+
+```javascript
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { useActor } from '@xstate/react';
+import { Actions, assign, createMachine, DoneInvokeEvent, interpret, send } from 'xstate';
+import { getLoginSid } from './fetchCalls/getLoginToken';
+import { getDevices } from './fetchCalls/getAllDevicesIP:Name';
+import { getWifiStatus } from './fetchCalls/getWifiStatus';
+import { getInternetStatus } from './fetchCalls/getInternetStatus';
+import { ContextData, Event, ServiceEvent, initialState } from '.';
+import { createClient, IGroup, INode, Variables } from '@mobsya-association/thymio-api';
+import { getWifiConfigFile } from './fetchCalls/getWifiConfigFile';
+import { getUptime } from './fetchCalls/getUptime';
+import { getIfStatus } from './fetchCalls/getIfstatus';
+import CryptoJS from 'crypto-js';
+```
+
+| Module or Function        | Description                                                                                                                                                                                                                                      |
+|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `React`                   | Provides access to core React functions and components, allowing the creation of components and state management in React applications.                                                                                                      |
+| `createContext`           | Creates a React context, enabling data sharing between components without manually passing props through each level of the component tree.                                                                                                      |
+| `useContext`              | Allows accessing the value of the React context in a functional component, enabling consuming the context and using its value anywhere within the component.                                                                                 |
+| `useEffect`               | Enables executing side effects in React components, such as subscriptions to external data, DOM updates, and resource cleanup.                                                                                                                 |
+| `useRef`                  | Creates a mutable reference that persists throughout the component's lifecycle, primarily used for accessing DOM nodes or mutable values without causing additional re-renders.                                                             |
+| `useState`                | Adds local state to functional components in React, allowing declaring state variables within a functional component and updating them using the `setState` method.                                                                        |
+| `useActor`                | Provides access to XState actors in React components, allowing subscribing to changes in actor state and sending events to state machines.                                                                                                   |
+| `Actions`                 | Provides functions and utilities for defining actions within XState machines, representing operations performed in response to events.                                                                                                          |
+| `assign`                  | Defines an action that assigns values to properties of the state machine's context.                                                                                                                                                             |
+| `createMachine`           | Creates a state machine in XState, allowing the definition of states, events, and transitions that comprise the machine's behavior.                                                                                                           |
+| `DoneInvokeEvent`         | Represents an event triggered when an invocation in a state machine completes, used to handle completion events of asynchronous invocations.                                                                                                    |
+| `interpret`               | Creates an interpreter instance of a state machine, allowing starting and stopping the execution of the state machine, as well as subscribing to changes in its state.                                                                      |
+| `send`                    | Sends events to a state machine in XState, allowing initiating state transitions and triggering actions in response to events.                                                                                                               |
+| `getLoginSid`             | Obtains a session identifier (SID) for logging into a remote system.                                                                                                                                                                             |
+| `getDevices`              | Retrieves the list of devices available on the network.                                                                                                                                                                                          |
+| `getWifiStatus`           | Gets the Wi-Fi status.                                                                                                                                                                                                                           |
+| `getInternetStatus`       | Checks the Internet connection status.                                                                                                                                                                                                           |
+| `ContextData`, `Event`, `ServiceEvent`, `initialState` | Provide types and initial values for context, events, and service events related to the state machine.                                                                                                                                        |
+| `createClient`, `IGroup`, `INode`, `Variables`  | Provide access to functions and types defined in the Thymio API, used for interacting with Thymio robots.                                                                                                                                      |
+| `getWifiConfigFile`       | Obtains the Wi-Fi configuration file.                                                                                                                                                                                                            |
+| `getUptime`               | Gets the system uptime.                                                                                                                                                                                                                          |
+| `getIfStatus`             | Gets the network interface status.                                                                                                                                                                                                              |
+| `CryptoJS`                | Provides access to the CryptoJS library, used for encryption and decryption operations.                                                                                                                                                         |
+
+## Actions
+
+Actions in XState are functions that define what happens when a specific transition occurs in a state machine. These actions can be asynchronous and can perform various tasks such as fetching data from an API, updating the state context, or interacting with external services. In the context of XState, actions play a crucial role in defining the behavior of a state machine by encapsulating the side effects triggered by state transitions. They allow developers to decouple the logic of the state machine from the side effects, making the state machine easier to understand, test, and maintain. Actions are executed when a state transition is triggered by an event, and they have access to the current context and event data, enabling them to make decisions based on the current state of the machine. By defining actions in XState, developers can create state machines that accurately model complex workflows and manage side effects in a predictable and controlled manner.
+
+Actions represent operations performed in response to events, while guards are conditions that determine program flow.
+
+| Action                  | Description                                                                                                                                                                                                                                                                                                                   |
+|-------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| getSessionData          | Retrieves session data from storage, removes a section from local storage, checks for a session ID (SID), and fetches a new SID if necessary.                                                                                                                                                                                |
+| login                   | Logs in using a password, retrieves a new SID, encrypts the password, stores the new SID and encrypted password in session storage.                                                                                                                                                                                       |
+| reloadSid               | Reloads the SID from session storage, decrypts the password using the encrypted password, fetches a new SID if necessary, and updates the stored SID and encrypted password.                                                                                                                                               |
+| reloadIfStatus          | Reloads the interface status using the current SID.                                                                                                                                                                                                                                                                            |
+| reloadUptime            | Reloads the system uptime using the current SID.                                                                                                                                                                                                                                                                              |
+| reloadInternetStatus    | Reloads the Internet connection status using the current SID.                                                                                                                                                                                                                                                                 |
+| reloadDevices           | Reloads the list of devices available on the network using the current SID.                                                                                                                                                                                                                                                   |
+| reloadWifiInfo          | Reloads the Wi-Fi status and information using the current SID.                                                                                                                                                                                                                                                               |
+| reloadConfigFile        | Reloads the Wi-Fi configuration file using the current SID.                                                                                                                                                                                                                                                                  |
+| updateFirstUseData     | Updates session storage, removes stored SIDs and encrypted passwords, and updates state based on event data.                                                                                                                                                                                                               |
+| updateAuthData          | Updates authentication data based on event data.                                                                                                                                                                                                                                                                              |
+| updateReloadSid         | Updates authentication data and sets a new SID timeout based on event data.                                                                                                                                                                                                                                                   |
+| loginError              | Handles login errors by updating state.                                                                                                                                                                                                                                                                                       |
+| cleanAuthData           | Cleans authentication data from session storage and updates state.                                                                                                                                                                                                                                                            |
+| updateLanguage          | Updates the language setting in state based on event data.                                                                                                                                                                                                                                                                    |
+| updateDevices           | Updates the list of devices based on event data.                                                                                                                                                                                                                                                                              |
+| updateInternetStatus    | Updates the Internet connection status based on event data.                                                                                                                                                                                                                                                                   |
+| updateWifiInfo          | Updates Wi-Fi information based on event data.                                                                                                                                                                                                                                                                                |
+| updateRobots            | Updates robot information based on event data.                                                                                                                                                                                                                                                                                |
+| updateConfigFile        | Updates Wi-Fi configuration file based on event data.                                                                                                                                                                                                                                                                         |
+| updateFirstUse         | Updates the first use flag and session storage based on event data.                                                                                                                                                                                                                                                           |
+| updateBatteryRobots     | Updates robot battery information based on event data.                                                                                                                                                                                                                                                                        |
+| updateIfStatus          | Updates interface status based on event data.                                                                                                                                                                                                                                                                                 |
+| updateUptime            | Updates system uptime based on event data.                                                                                                                                                                                                                                                                                    |
+
+## Guards
+
+Guards in XState are conditions that determine whether a transition from one state to another is allowed to occur. These conditions are evaluated before a transition is executed, and if the guard condition returns true, the transition is allowed to proceed; otherwise, it is blocked. Guards provide a way to enforce constraints on state transitions based on the current context and event data. They are typically used to implement conditional logic within a state machine, allowing developers to define specific criteria that must be met for a transition to occur. Guards are essential for creating robust state machines that accurately represent the business logic of an application and ensure that transitions occur only when certain conditions are satisfied. By incorporating guards into state machine definitions, developers can model complex workflows with precision and enforce business rules effectively, resulting in more reliable and maintainable code.
+
+| Guard                    | Description                                                                                                                                                                                                                                                                                                                   |
+|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| isLogged                 | Checks if a session ID (SID) exists in the context, returning true if it does, indicating that the user is logged in.                                                                                                                                                                                                       |
+| reloadSIdTimeCondition   | Checks if the SID timeout condition is met by comparing the current time with the time when the SID was last updated. If more than 5 minutes have passed, returns false; otherwise, returns true.                                                                                                                        |
+| serverIsAvailable        | Checks if the server is available by verifying that the serverNotAvailable flag in the context is not set to true. Returns true if the server is available, indicating that requests can be made; otherwise, returns false.                                                                                               |
+
+## State Machine
+
+The state machine defined here orchestrates the workflow of a system, managing the authentication process and fetching data from various sources. Let's break down how it works:
+
+[state machine graph](https://stately.ai/viz/69cbeedb-cc09-442a-8c79-f4a126c9d09a)
+
+<iframe
+src="https://stately.ai/viz/embed/69cbeedb-cc09-442a-8c79-f4a126c9d09a?mode=viz&panel=code&showOriginalLink=1&readOnly=1&pan=1&zoom=1&controls=1" sandbox="allow-same-origin allow-scripts"
+style={{ width: '100%', height: '300px' }}
+></iframe>
+
+<br />
+<br />
+<br />
+
+### State Machine Overview:
+- **States**: The state machine has several states that represent different stages of the system's operation. These states include:
+  - **Start**: Initial state where the authentication process begins.
+  - **Not Logged**: State indicating that the user is not authenticated.
+  - **Sending Login Data**: State for sending login credentials.
+  - **Reload Sid**: State for refreshing session ID.
+  - **Renew Sid**: State for renewing session ID after initial login.
+  - **Update If Status**: State for updating interface status.
+  - **Update Uptime**: State for updating system uptime.
+  - **Update Internet Status**: State for updating internet connectivity status.
+  - **Update Devices**: State for updating available devices.
+  - **Update Config File**: State for updating configuration files.
+  - **Update Wifi Info**: State for updating WiFi information.
+  - **Idle**: State representing normal operation.
+  - **Disconnected**: State indicating a disconnected state from the server.
+
+### State Transitions:
+- **Transitions**: Transitions between states are triggered by events, such as user actions or data updates.
+  - Each state may have multiple transitions defined in its configuration.
+  - Transitions can lead to different states depending on the outcome of asynchronous actions or guard conditions.
+
+### Actions:
+- **Actions**: Actions are functions that are executed when a transition occurs.
+  - These actions include asynchronous operations such as fetching data or updating the state context.
+  - Actions are defined for different states and events, allowing for granular control over the workflow.
+
+### Guards:
+- **Guards**: Guards are conditions that determine whether a transition is allowed to occur.
+  - Guards are evaluated before a transition is executed, allowing developers to enforce constraints on state transitions.
+  - Guards ensure that transitions occur only when certain conditions are met, enhancing the reliability and predictability of the system.
+
+### Sensitivity to Events and Action Chains:
+- **Sensitive Events**: The state machine is sensitive to events such as LOGIN, LOGOUT, updateRobots, and updateLanguage, among others.
+- **Action Chains**: Each state transition may trigger a chain of actions defined for that transition.
+- **Error Handling**: Error handling is incorporated into the state machine to handle scenarios where asynchronous operations fail, leading to transitions to error states or fallback actions.
+
+In summary, this state machine provides a structured approach to managing the authentication process and data fetching in the system, ensuring smooth operation and robust error handling.
+
+## Service and Interpretation
+
+The service is created using the `interpret` function and started to begin listening for events and state transitions.
+
+```javascript
+export const stateService = interpret(machine)
+  .onTransition((state) => {
+    // State transition handling
+  })
+  .onEvent((event) => {
+    // Event handling
+  })
+  .start();
+```
+
+## Context and State Provider
+
+A context and state provider are defined to provide the machine state to React components.
+
+
+
+The `StateProvider` function serves as a bridge between the state machine defined using XState and the React application. Let's dive into its role and how it orchestrates with the state machine:
+
+### Role within React:
+- **Provider Component**: The `StateProvider` function is a React component that acts as a provider. It wraps its children with a context provider, allowing its descendants to access the state machine's services.
+
+- **Context API**: It utilizes React's Context API (`StateContext.Provider`) to propagate the state machine's services throughout the component tree. This ensures that any component within the tree can access the services provided by the state machine.
+
+### Orchestration with the State Machine:
+- **Service Access**: Within the `StateProvider`, it obtains the services provided by the state machine using the `useActor` hook. This hook allows the component to access the state machine's services, including its current state and any actions to transition between states.
+
+- **Effect Hook**: The `useEffect` hook is employed to manage side effects related to the state machine's services. It listens for changes in specific aspects of the state machine's context, such as the user's authentication status or network status, and triggers actions accordingly.
+
+- **Asynchronous Operations**: The `StateProvider` function performs asynchronous operations, such as connecting to external services or updating state variables based on received data. For example, it establishes a WebSocket connection to retrieve information about robots and updates the state machine accordingly.
+
+- **State Updates**: As a result of asynchronous operations or changes in the state machine's context, the `StateProvider` dispatches actions to update the state machine's context. These actions trigger transitions within the state machine, leading to changes in its state and potentially impacting the application's behavior.
+
+### Overall Workflow:
+1. **Initialization**: The `StateProvider` initializes by obtaining the state machine's services and setting up any necessary resources.
+2. **Effect Handling**: It listens for changes in relevant aspects of the state machine's context and performs corresponding actions or side effects.
+3. **Asynchronous Operations**: It handles asynchronous operations, such as fetching data or establishing connections, and updates the state machine's context accordingly.
+4. **State Updates**: Based on the outcomes of asynchronous operations or changes in context, it dispatches actions to update the state machine's context, potentially triggering state transitions.
+5. **Context Propagation**: Finally, it provides the updated state machine's services to its descendants via the context provider, allowing other components to react to changes in the application's state.
+
+Sure, let's break down the code into several parts and explain each one in detail:
+
+### Part 1: State Provider Function Definition
+```javascript
+export const StateProvider = ({ children }: { children: React.ReactNode }) => {
+```
+This defines a functional component named `StateProvider` which receives `children` as a prop, representing the components wrapped by this provider.
+
+### Part 2: State and State Management
+```javascript
+const services = useActor(stateService);
+const timeCharged = useRef<{ [uuid: string]: Date }>({});
+const [TDMActive, setTDMActive] = useState(false);
+```
+- `services`: Obtains the state machine's services using the `useActor` hook.
+- `timeCharged`: Initializes a reference to manage the time when a robot's battery was last charged.
+- `TDMActive`: Initializes a state variable to manage whether the TDM (presumably a management system) is active or not.
+
+### Part 3: Effect Hook
+```javascript
+useEffect(() => {
+  // Effect logic
+}, [services[0].context.isLoggedIn, services[0]?.context?.ifStatus]);
+```
+This `useEffect` hook listens for changes in the user's authentication status (`isLoggedIn`) and the network status (`ifStatus`). When these values change, it triggers the effect logic.
+
+### Part 4: Asynchronous Operation and WebSocket Connection
+```javascript
+if (!TDMActive && services[0].context.isLoggedIn && services[0]?.context?.ifStatus?.route[0]?.source) {
+  const host = extractIPAddress(services[0].context.ifStatus.route[0].source);
+  createClient(`ws://${host}:8597`).onNodesChanged = async (nodes: INode[]) => {
+    // WebSocket connection logic
+  };
+}
+```
+This block checks if the TDM is not active, the user is logged in, and the network status is available. If these conditions are met, it extracts the host address from the network status and establishes a WebSocket connection to a specific port.
+
+### Part 5: WebSocket Event Handling
+```javascript
+const _nodes = await Promise.all(nodes.map(async (node: INode) => {
+  // Iterating over received nodes and handling events
+}));
+```
+Within the WebSocket event handler, it iterates over the received nodes, handling each node's events and updating the state accordingly.
+
+### Part 6: State Update and Side Effects
+```javascript
+services[1]({ type: 'updateRobots', data: { robots: _nodes } });
+setTDMActive(true);
+```
+After processing the received nodes, it updates the state machine with the new robot data and sets the TDM as active. These state updates trigger re-renders in components subscribed to these state changes.
+
+### Part 7: Context Provider
+```javascript
+return <StateContext.Provider value={{ services }}>{children}</StateContext.Provider>;
+```
+Finally, the component returns a context provider (`StateContext.Provider`) wrapping its children. This provides the state machine's services to its descendant components, allowing them to access and react to changes in the application's state.
+
+Overall, the `StateProvider` component orchestrates the integration between the XState-powered state machine, asynchronous operations, and React components, facilitating efficient state management and real-time updates in the application.
+
+## Custom Hooks
+
+Sure, let's break down each custom hook:
+
+### `useDataState`
+```javascript
+export const useDataState = () => {
+  const {
+    services: [current],
+  } = useContext(StateContext);
+
+  return current.context as ContextData;
+};
+```
+- **Purpose**: This hook provides access to the current state data from the context.
+- **Usage**:
+  - It uses the `useContext` hook to access the `StateContext`, which contains the current state.
+  - It returns the context data (`current.context`) casted as `ContextData`.
+
+### `useStateMachine`
+```javascript
+export const useStateMachine = () => {
+  const {
+    services: [Mcurrent, Msend],
+  } = useContext(StateContext);
+
+  // return state of machine
+  return Mcurrent.value;
+};
+```
+- **Purpose**: This hook provides access to the current state of the state machine.
+- **Usage**:
+  - It uses the `useContext` hook to access the `StateContext`, which contains the current state and the `send` function.
+  - It returns the value of the current state (`Mcurrent.value`).
+
+### `useEmitter`
+```javascript
+export const useEmitter = () => {
+  const {
+    services: [current, sendEvent],
+  } = useContext(StateContext);
+
+  const emit = ({ event, data }: ServiceEvent) => {
+    sendEvent({ type: event, data: data });
+  };
+
+  return emit as (data: ServiceEvent) => void;
+};
+```
+- **Purpose**: This hook provides a function to send events to the state machine.
+- **Usage**:
+  - It uses the `useContext` hook to access the `StateContext`, which contains the `sendEvent` function.
+  - It defines a function `emit` that takes an event and data as parameters and sends the event to the state machine using `sendEvent`.
+  - It returns the `emit` function casted as `(data: ServiceEvent) => void`, allowing components to emit events to the state machine.
+
+Overall, these custom hooks encapsulate the logic for accessing state data, obtaining the current state of the state machine, and sending events to the state machine. They provide convenient abstractions for interacting with the state machine within React components, promoting code reusability and maintainability.
+
+## Conclusion
+
+The React hook for managing the state of the XState machine provides an efficient and straightforward way to interact with state machines in React applications. By following this guide, developers can easily integrate state machine logic into their React components in an organized and efficient manner.
