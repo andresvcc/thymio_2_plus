@@ -1,0 +1,84 @@
+import { Meta, Description } from '@storybook/addon-docs'
+
+<Meta
+  title="HTTP CAlls/get all devices"
+  parameters={{
+    viewMode: 'docs',
+    previewTabs: {
+      canvas: { hidden: true }
+     },
+  }}
+/>
+
+# Get All Devices
+
+### API CALL: `getDevices`
+
+This function retrieves the devices connected to the Thymio2+ router, particularly tablets.
+
+#### Parameters:
+
+- `sid`: A `Sid` object containing the session ID required for authentication.
+
+#### Returns:
+
+- A Promise resolving to an array of devices connected to the router. Each device object contains the following properties:
+  - `ip`: The IP address of the device.
+  - `id`: The unique identifier of the device.
+  - `mac`: The MAC address of the device.
+  - `active`: A boolean indicating whether the device is currently active or not.
+
+#### Example Usage:
+
+```javascript
+import { Sid } from '..';
+
+// Sample session ID
+const sid: Sid = 'sampleSessionID';
+
+async function fetchDevices() {
+  try {
+    const devices = await getDevices({ sid });
+    console.log(devices);
+  } catch (error) {
+    console.error('Error fetching devices:', error.message);
+  }
+}
+
+fetchDevices();
+```
+
+#### Details:
+
+1. **Function**: `matchesThymioPattern`
+
+   - Description: Checks if the input string matches the pattern 'Thymio-XXXXXX.lan'.
+   - Parameters: `str` - The input string to be tested.
+   - Returns: A boolean indicating whether the input string matches the pattern or not.
+
+2. **Function**: `getDevices`
+
+   - Description: Retrieves the devices connected to the Thymio2+ router, particularly tablets.
+   - Parameters: An object containing the session ID (`sid`).
+   - Returns: A Promise resolving to an array of device objects.
+   - Steps:
+     1. Constructs the necessary HTTP request headers.
+     2. Fetches IP address hints from the router.
+     3. Fetches MAC address hints from the router.
+     4. Merges IP and MAC address data to form device objects.
+     5. Filters out devices that do not match the Thymio pattern.
+   - Throws: An error if fetching devices fails.
+
+#### Important Note:
+
+- Ensure that the `Sid` object passed to the function contains a valid session ID for authentication with the router.
+
+#### Dependencies:
+
+- This function relies on the `fetch` API for making HTTP requests.
+
+#### Security Considerations:
+
+- Ensure that the session ID (`sid`) used for authentication is obtained securely and is not exposed to unauthorized users.
+- Implement proper error handling and validation to handle unexpected responses from the router.
+- Use HTTPS instead of HTTP for secure communication with the router whenever possible.

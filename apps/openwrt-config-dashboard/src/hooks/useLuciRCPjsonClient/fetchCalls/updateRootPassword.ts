@@ -1,7 +1,3 @@
-import { LoginTokenResponse } from '@/types';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import tough, { Cookie } from 'tough-cookie';
-
 export async function updateRootPassword({
   newPassword,
   sidToken,

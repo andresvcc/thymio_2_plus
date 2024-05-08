@@ -1,0 +1,93 @@
+import { Meta, Description } from '@storybook/addon-docs'
+
+<Meta
+  title="HTTP CAlls/get if status"
+  parameters={{
+    viewMode: 'docs',
+    previewTabs: {
+      canvas: { hidden: true }
+     },
+  }}
+/>
+
+# Get Network Status
+
+### API CALL: : `getIfStatus`
+
+This function retrieves the status of the network interface from the router.
+
+#### Parameters:
+
+- `sid`: A `Sid` object containing the session ID required for authentication.
+
+#### Returns:
+
+- A Promise resolving to an object representing the status of the network interface.
+
+#### Example Usage:
+
+```javascript
+import { Sid } from '..';
+
+// Sample session ID
+const sid: Sid = 'sampleSessionID';
+
+async function fetchIfStatus() {
+  try {
+    const ifStatus = await getIfStatus({ sid });
+    console.log(ifStatus);
+  } catch (error) {
+    console.error('Error fetching interface status:', error.message);
+  }
+}
+
+fetchIfStatus();
+```
+
+#### Details:
+
+1. **Function**: `getIfStatus`
+
+   - Description: Retrieves the status of the network interface from the router.
+   - Parameters: An object containing the session ID (`sid`).
+   - Returns: A Promise resolving to an object representing the status of the network interface.
+   - Throws: An error if fetching the interface status fails.
+
+2. **Default Status Object**:
+
+   - Description: A default status object returned when the interface status is not found.
+   - Fields:
+     - `up`: Indicates if the interface is up.
+     - `pending`: Indicates if there are pending changes.
+     - `available`: Indicates if the interface is available.
+     - `autostart`: Indicates if the interface starts automatically.
+     - `dynamic`: Indicates if the interface is dynamic.
+     - `uptime`: Uptime of the interface.
+     - `l3_device`: Layer 3 device.
+     - `proto`: Protocol used.
+     - `device`: Device name.
+     - `updated`: Updated fields.
+     - `metric`: Metric value.
+     - `dns_metric`: DNS metric value.
+     - `delegation`: Indicates if delegation is enabled.
+     - `ipv4-address`: Array of IPv4 addresses.
+     - `ipv6-address`: Array of IPv6 addresses.
+     - `ipv6-prefix`: Array of IPv6 prefixes.
+     - `ipv6-prefix-assignment`: Array of IPv6 prefix assignments.
+     - `route`: Array of routes.
+     - `dns-server`: Array of DNS servers.
+     - `dns-search`: Array of DNS search domains.
+     - `neighbors`: Array of neighbors.
+     - `inactive`: Inactive status fields.
+     - `data`: Additional data.
+   - Note: This default status object is returned when the interface status is not found.
+
+#### Dependencies:
+
+- This function relies on the `fetch` API for making HTTP requests.
+
+#### Security Considerations:
+
+- Ensure that the session ID (`sid`) used for authentication is obtained securely and is not exposed to unauthorized users.
+- Implement proper error handling and validation to handle unexpected responses from the router.
+- Use HTTPS instead of HTTP for secure communication with the router whenever possible.
