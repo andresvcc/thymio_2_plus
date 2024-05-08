@@ -179,10 +179,9 @@ function App({navigation}: any): JSX.Element {
         const newPath = `${documentDir}/${filename.split('.').slice(0, -1).join('.') + '(' + index + ')' + '.' + filename.split('.').pop()}`;
         fileExists = await ReactNativeBlobUtil.fs.exists(newPath);
         if (!fileExists) {
-          // Muestra una alerta preguntando si el usuario quiere guardar con el nuevo nombre
           Alert.alert(
-            'Archivo ya existe',
-            `El archivo ya existe. ¿Quieres guardarlo como ${newPath.split('/').pop()}?`,
+            i18n.t('file_exist'),
+            i18n.t('file_exist_message', {name: filename}),
             [
               {
                 text: 'No',
@@ -192,9 +191,8 @@ function App({navigation}: any): JSX.Element {
                 style: 'cancel',
               },
               {
-                text: 'Sí',
+                text: 'OK',
                 onPress: async () => {
-                  // El usuario acepta, guarda el archivo con el nuevo nombre
                   await ReactNativeBlobUtil.fs.createFile(
                     newPath,
                     base64,
@@ -224,7 +222,6 @@ function App({navigation}: any): JSX.Element {
         }
       }
 
-      // Si el archivo no existía inicialmente, procede a guardar sin preguntar
       await ReactNativeBlobUtil.fs.createFile(path, base64, 'base64');
       Alert.alert(
         i18n.t('scratch_save_success'),
@@ -353,23 +350,20 @@ function App({navigation}: any): JSX.Element {
       } else if (objectData.spec === 'alert') {
         // console.log('Alerta', objectData.payload);
       } else {
-        // console.log('Mensaje recibido:', objectData.spec);
         setDialogVisible(objectData.payload);
       }
     } catch (error) {
-      console.log('Error al procesar el mensaje:', error);
+      console.log('Error to parse data:', error);
     }
   };
 
   const deberíaDescargar = useCallback((_url: string) => {
-    // Ajusta esta lógica según tus necesidades
-    return _url.includes('blob:'); // Ejemplo para archivos JSON
+    return _url.includes('blob:');
   }, []);
 
   const handleNavigationStateChange = useCallback(
     (event: any) => {
       if (Platform.OS === 'android') {
-        // console.log('event:::->', event);
         if (event.title === 'Scratch 3.0 GUI') {
           setWebview('scratch');
           setQueryParams(getQueryParams(event.url));
@@ -378,13 +372,9 @@ function App({navigation}: any): JSX.Element {
         return;
       }
 
-      // console.log('Evento de navegación:', event.url);
       if (deberíaDescargar(event.url)) {
-        // Detiene la carga en el WebView y maneja la descarga
         webViewRef.current?.stopLoading();
       } else {
-        // Si no es una descarga, pasa el evento a la función onChange propuesta
-
         setWebview(getPathAfterLocalhost(event.url));
         setQueryParams(getQueryParams(event.url));
         setUrl(event.url);
@@ -394,7 +384,6 @@ function App({navigation}: any): JSX.Element {
   );
 
   const handleSave = () => {
-    // setConfig(dialogVisible);
     saveJsonFile(dialogVisible, fileName + '.sb3');
     setDialogVisible(null);
   };
@@ -411,22 +400,15 @@ function App({navigation}: any): JSX.Element {
       .catch(err => console.error('An error occurred', err));
   };
 
-  // useEffect Platform
   useEffect(() => {
-    const newHost =
-      Platform.OS === 'android'
-        ? 'file:///android_asset' // 'file:///android_asset'
-        : 'http://127.0.0.1:3000';
+    const newHost = 'file:///android_asset';
 
     setHost(newHost);
     setUrl(
       `${newHost}/scanner/index.html?data=${JSON.stringify({...LTServices})}&gl=${JSON.stringify(
         {
           interface: 'scratch',
-          redirect:
-            Platform.OS !== 'android'
-              ? 'file:///android_asset/scratch/index.html'
-              : 'http://127.0.0.1:3000/scratch/index.html',
+          redirect: 'file:///android_asset/scratch/index.html',
         },
       )}&lang=${language}&isTablet=${JSON.stringify(isTablet)}`,
     );

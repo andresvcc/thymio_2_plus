@@ -179,13 +179,11 @@ function App({navigation}: any): JSX.Element {
 
       const res = results[0];
 
-      // Res contiene varias propiedades, incluyendo URI, tipo, nombre del archivo, tamaño, etc.
       console.log('URI:', res.uri);
       console.log('Tipo:', res.type);
       console.log('Nombre del archivo:', res.name);
       console.log('Tamaño:', res.size);
 
-      // read file from uri
       const file = await ReactNativeBlobUtil.fs.readFile(res.uri, 'utf8');
 
       console.log('File:', file);
@@ -197,10 +195,6 @@ function App({navigation}: any): JSX.Element {
       webViewRef.current.postMessage(
         JSON.stringify({action: 'setProgram', program: file}),
       );
-
-      // webViewRef.current.reload();
-
-      // Aquí puedes manejar el objeto JSON como necesites
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log('Selección de archivo cancelada');
@@ -234,7 +228,6 @@ function App({navigation}: any): JSX.Element {
             {
               text: i18n.t('vpl3_quit_with_save'),
               onPress: () => {
-                // navigation.dispatch(CommonActions.goBack());
                 if (webViewRef.current) {
                   webViewRef.current.postMessage(
                     JSON.stringify({
@@ -253,7 +246,7 @@ function App({navigation}: any): JSX.Element {
   };
 
   const shareFile = async (filePath: any) => {
-    console.log(`Intentando compartir archivo: ${filePath}`); // Asegúrate de que esto se imprima
+    console.log(`Intentando compartir archivo: ${filePath}`);
     try {
       const shareResponse = await Share.open({
         url: `file://${filePath}`,
@@ -270,7 +263,6 @@ function App({navigation}: any): JSX.Element {
     quit: boolean,
   ) => {
     try {
-      // Verifica que dirs y DocumentDirectoryPath están correctamente definidos
       console.log('The document directory is: ', ReactNativeBlobUtil.fs.dirs);
 
       const documentDir = ReactNativeBlobUtil.fs.dirs.LegacyDownloadDir;
@@ -281,10 +273,6 @@ function App({navigation}: any): JSX.Element {
 
       const path = `${documentDir}/${filename}`;
 
-      // Asegúrate de que jsonData sea un string JSON válido, no es necesario
-      // eliminar ningún prefijo de datos como en el caso de base64
-
-      // Guardar el string JSON en el archivo
       await ReactNativeBlobUtil.fs.writeFile(path, jsonData, 'utf8');
       console.log('The file saved successfully in path:', path);
 
@@ -301,7 +289,6 @@ function App({navigation}: any): JSX.Element {
         return path;
       }
 
-      // Mostrar una alerta indicando éxito y opciones posteriores
       Alert.alert(
         i18n.t('scratch_save_success'),
         i18n.t('scratch_save_options'),
@@ -314,7 +301,6 @@ function App({navigation}: any): JSX.Element {
       return path;
     } catch (error) {
       console.error('Error saving the JSON file:', error);
-      // Considera mostrar un mensaje de error al usuario
     }
   };
 
@@ -386,7 +372,6 @@ function App({navigation}: any): JSX.Element {
           .filter((item: any) => names.includes(item.key))
           .reduce((acc: any, item: any) => ({...acc, [item.key]: item}), {});
 
-        // console.log('LTSERVICES:::', resutl);
         setLTServices(resutl);
         setFirst(false);
       }
@@ -404,7 +389,6 @@ function App({navigation}: any): JSX.Element {
   }, [services]);
 
   const injectedJavaScript = useMemo(() => {
-    // console.log('config changed in MEMO');
     const js = `
   
       function handleMessage(event) {
@@ -450,7 +434,6 @@ function App({navigation}: any): JSX.Element {
       true; // nota: siempre termina con true para evitar warnings
     `;
 
-    // console.log('injectedJavaScript', js);
     return js;
   }, [config]);
 
@@ -469,18 +452,10 @@ function App({navigation}: any): JSX.Element {
       return;
     }
 
-    // console.log('Mensaje recibido:', _data);
-
     const objectData = JSON.parse(_data);
 
     if (objectData.spec === 'openUrl') {
-      // console.log('openUrl --->', host + objectData.url);
-
-      const newHost =
-        Platform.OS === 'android'
-          ? 'file:///android_asset'
-          : 'http://127.0.0.1:3000';
-
+      const newHost = 'file:///android_asset';
       console.log('newHost::1:->', newHost + objectData.url);
       setUrl(newHost + objectData.url);
     } else if (objectData.spec === 'toSaveAndQuit') {
@@ -515,7 +490,6 @@ function App({navigation}: any): JSX.Element {
             text: i18n.t('vpl3_program_load'),
             style: 'destructive',
             onPress: () => {
-              // loadJsonFile();
               requestStoragePermission(() => {
                 loadJsonFile();
               });
@@ -533,42 +507,24 @@ function App({navigation}: any): JSX.Element {
     }
   };
 
-  const deberíaDescargar = useCallback((_url: string) => {
-    // Ajusta esta lógica según tus necesidades
-    return _url.includes('blob:'); // Ejemplo para archivos JSON
+  const isDownloadAction = useCallback((_url: string) => {
+    return _url.includes('blob:');
   }, []);
 
   const handleNavigationStateChange = useCallback(
     (event: any) => {
-      if (Platform.OS === 'android') {
-        // console.log('event:::->', event);
-        if (event.title === 'VPL') {
-          setWebview('vpl3');
-          setQueryParams(getQueryParams(event.url));
-          console.log('newHost::2:->', event.url);
-          setUrl(event.url);
-        }
-        return;
-      }
-
-      // console.log('Evento de navegación:', event.url);
-      if (deberíaDescargar(event.url)) {
-        // Detiene la carga en el WebView y maneja la descarga
-        webViewRef.current?.stopLoading();
-      } else {
-        // Si no es una descarga, pasa el evento a la función onChange propuesta
-
-        setWebview(getPathAfterLocalhost(event.url));
+      if (event.title === 'VPL') {
+        setWebview('vpl3');
         setQueryParams(getQueryParams(event.url));
-        console.log('newHost::3:->', event.url);
+        console.log('newHost::2:->', event.url);
         setUrl(event.url);
       }
+      return;
     },
-    [deberíaDescargar],
+    [isDownloadAction],
   );
 
   const handleSave = () => {
-    // setConfig(dialogVisible);
     saveJsonFile(JSON.stringify(dialogVisible), fileName + '.vpl3', quit);
     setDialogVisible(null);
   };
@@ -585,12 +541,8 @@ function App({navigation}: any): JSX.Element {
       .catch(err => console.error('An error occurred', err));
   };
 
-  // useEffect Platform
   useEffect(() => {
-    const newHost =
-      Platform.OS === 'android'
-        ? 'file:///android_asset' // 'file:///android_asset'
-        : 'http://127.0.0.1:3000';
+    const newHost = 'file:///android_asset';
 
     setHost(newHost);
     console.log(
@@ -598,10 +550,7 @@ function App({navigation}: any): JSX.Element {
       `${newHost}/scanner/index.html?data=${JSON.stringify({...LTServices})}&gl=${JSON.stringify(
         {
           interface: 'vpl3',
-          redirect:
-            Platform.OS !== 'android'
-              ? 'file:///android_asset/vpl3/index.html'
-              : '',
+          redirect: 'file:///android_asset/vpl3/index.html',
         },
       )}&lang=${language}&isTablet=${JSON.stringify(isTablet)}`,
     );
@@ -609,10 +558,7 @@ function App({navigation}: any): JSX.Element {
       `${newHost}/scanner/index.html?data=${JSON.stringify({...LTServices})}&gl=${JSON.stringify(
         {
           interface: 'vpl3',
-          redirect:
-            Platform.OS !== 'android'
-              ? 'file:///android_asset/vpl3/index.html'
-              : '',
+          redirect: 'file:///android_asset/vpl3/index.html',
         },
       )}&lang=${language}&isTablet=${JSON.stringify(isTablet)}`,
     );
@@ -620,7 +566,6 @@ function App({navigation}: any): JSX.Element {
 
   useEffect(() => {
     setTimeout(() => {
-      // console.log('\n\n\nurl changed\n\n\n', url);
       setLastUrl(url);
     }, 250);
   }, [url]);

@@ -32,4 +32,6 @@ export const de = {
   scratch_saveForm_labelButton_calcel: 'Abbrechen',
   thymio2p_scan: 'Scannen',
   vpl3_program_new: 'Nuovo programma',
+  file_exist: 'Datei existiert bereits',
+  file_exist_message: 'Möchten Sie sie als {{name}} überschreiben?',
 };

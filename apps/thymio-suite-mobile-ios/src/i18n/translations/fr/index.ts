@@ -32,4 +32,6 @@ export const fr = {
   scratch_saveForm_labelButton_save: 'Sauvegarder',
   scratch_saveForm_labelButton_calcel: 'Annuler',
   thymio2p_scan: 'Scanner',
+  file_exist: 'Fichier déjà existant',
+  file_exist_message: 'Voulez-vous le sauvegarder sous le nom de {{name}} ?',
 };

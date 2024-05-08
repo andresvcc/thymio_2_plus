@@ -1,0 +1,142 @@
+import { Meta, Description } from '@storybook/addon-docs'
+
+<Meta 
+  title="Mobile app/iOS/Scratch"  
+  parameters={{
+    viewMode: 'docs',
+    previewTabs: { 
+      canvas: { hidden: true } 
+     },
+  }}
+/>
+
+## Scratch Interface Documentation iOS
+
+Scratch is a widely recognized visual programming language developed to simplify the process of learning to code. It's particularly useful for educational purposes due to its intuitive drag-and-drop interface. In relation to the Thymio2+ robot, Scratch provides a friendly and engaging way for users, especially younger learners, to program and control their robots. By using Scratch with Thymio2+, students can visually assemble code blocks to control the robot's actions and responses to environmental inputs, making complex concepts in robotics and programming accessible and fun. This integration empowers educators and students to explore the fundamentals of robotics programming in an interactive and supportive environment.
+
+
+
+#### Example URL Structure for Scratch
+- **`device`**: The unique identifier for the Thymio2+ device, enabling Scratch to connect specifically to this robot.
+- **`ws`**: The WebSocket URL (`ws://127.0.0.1:8597`), crucial for maintaining a live session and ensuring that commands and data can be sent and received in real-time.
+- **`pass`**: The password to authenticate the connection with the Thymio Device Manager, ensuring that interactions are secure and authorized.
+
+```
+http://localhost:3000/scratch/index.html?device=%7Bd768ed1a-5831-425a-89a0-50d10f8c1a4c%7D&ws=ws://127.0.0.1:8597&pass=CX87IR
+```
+
+**Key Parameters Explained:**
+- **`device`**: The unique identifier for the Thymio2+ device, enabling Scratch to connect specifically to this robot.
+- **`ws`**: The WebSocket URL (`ws://127.0.0.1:8597`), crucial for maintaining a live session and ensuring that commands and data can be sent and received in real-time.
+- **`pass`**: The password to authenticate the connection with the Thymio Device Manager, ensuring that interactions are secure and authorized.
+
+This setup allows users to utilize Scratch's visual programming tools to control and interact with Thymio2+ robots, enhancing the educational experience by simplifying complex programming concepts into user-friendly interfaces.
+
+### Generating the URL
+
+To construct this URL, necessary data must first be acquired from the 'scanner' page, which can be accessed using the following URL pattern:
+
+```javascript
+http://127.0.0.1:3000/scanner/index.html?data=${
+    JSON.stringify({
+        ...LTServices
+    })}&gl=${JSON.stringify(
+        {
+            interface: 'vpl3',
+        },
+    )}&lang=${language}`
+```
+
+Here, `LTServices` is an object containing device information structured as follows:
+
+```typescript
+interface DeviceInfo {
+    port: number;
+    txt: {
+        uuid: string;
+        'ws-port': string;
+    };
+    addresses: string[];
+    name: string;
+    fullName: string;
+    host: string;
+}
+
+interface DevicesMap {
+    [hostname: string]: DeviceInfo;
+}
+```
+
+### Purpose of the Scanner Page
+
+The scanner page uses the data from `LTServices` to scan each TDM and retrieve a list of connected robots. Users can select the appropriate robot on this page, which then enables the VPL3 page to be loaded with all necessary data to initiate the interface correctly.
+
+### File Management in WebView
+
+#### Saving Files
+
+**Workflow:**
+1. **User Action**: The process begins when a user initiates a save action from the Scratch interface.
+2. **Capture Data**: The current state of the Scratch project is serialized into a JSON or a suitable file format directly within the WebView.
+3. **PostMessage Communication**: This serialized data is sent to the native app layer using `postMessage` with an action type, typically `{ action: "saveProgram", content: serializedData }`.
+4. **Native Handling**:
+    - React Native code intercepts this message and triggers file system operations to save the data locally.
+    - Uses `react-native-fs` or similar libraries to write the data to the device's storage.
+5. **User Feedback**: Once the file is saved, the app can either update the WebView with a success message or show a native toast/dialog confirming the save.
+
+```javascript
+// Example of native code to save data received from WebView
+const handleSaveToFile = (jsonData) => {
+  const path = `${RNFS.DocumentDirectoryPath}/scratchProject.json`;
+  RNFS.writeFile(path, jsonData, 'utf8')
+    .then(() => console.log('Project saved successfully'))
+    .catch(err => console.error('Failed to save project', err));
+};
+```
+
+#### Uploading Files
+
+**Workflow:**
+1. **Open Document Picker**: Initiated by the user, the native layer opens a document picker for the user to select a Scratch project file.
+2. **Read File Content**: Once a file is chosen, its content is read and sent back to the WebView.
+3. **Load into Scratch**: The file content is loaded into the Scratch environment via `postMessage`, typically using `{ action: "loadProgram", content: fileContent }`.
+
+```javascript
+// Example of native code to handle file upload
+const uploadProject = async () => {
+  try {
+    const result = await DocumentPicker.pick({ type: [DocumentPicker.types.allFiles] });
+    const fileContent = await RNFS.readFile(result.uri, 'utf8');
+    webViewRef.current.postMessage(JSON.stringify({ action: "loadProgram", content: fileContent }));
+  } catch (error) {
+    console.error('Error uploading file:', error);
+  }
+};
+```
+
+### WebView Configuration
+
+**Initial Setup:**
+- **URI Configuration**: The WebView loads the Scratch interface using a specifically constructed URI that includes parameters necessary for initializing the correct environment.
+- **Communication Handlers**: JavaScript injected into the WebView handles incoming messages (e.g., save or load actions) and interacts with the native environment as needed.
+
+### Navigation and Dialog Interaction
+
+**Back Navigation and Custom Dialogs**:
+- Custom buttons and dialogs are integrated within the app for a seamless user experience. For example, a back button allows users to exit the Scratch interface, while custom dialogs can manage file naming or confirmations.
+
+```javascript
+// React Navigation and dialog for saving a file
+navigation.setOptions({
+  headerRight: () => (
+    <TouchableOpacity onPress={showSaveDialog}>
+      <SaveIcon />
+    </TouchableOpacity>
+  ),
+});
+
+const showSaveDialog = () => {
+  // Display a dialog to enter filename and confirm save
+  setDialogVisible(true);
+};
+```

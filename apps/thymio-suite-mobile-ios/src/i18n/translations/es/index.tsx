@@ -31,4 +31,6 @@ export const es = {
   scratch_saveForm_labelButton_save: 'Guardar',
   scratch_saveForm_labelButton_calcel: 'Cancelar',
   thymio2p_scan: 'Escanear',
+  file_exist: 'El archivo ya existe',
+  file_exist_message: '¿Quieres sobrescribirlo como {{name}}?',
 };

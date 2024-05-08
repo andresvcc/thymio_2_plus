@@ -30,4 +30,6 @@ export const en = {
   scratch_saveForm_labelButton_save: 'Save',
   scratch_saveForm_labelButton_calcel: 'Cancel',
   thymio2p_scan: 'Scan',
+  file_exist: 'File already exists',
+  file_exist_message: 'Do you want to overwrite it as {{name}}?',
 };

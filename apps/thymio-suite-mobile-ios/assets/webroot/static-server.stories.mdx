@@ -1,0 +1,158 @@
+import { Meta, Description } from '@storybook/addon-docs'
+
+<Meta 
+  title="Mobile app/iOS/Static Server"  
+  parameters={{
+    viewMode: 'docs',
+    previewTabs: { 
+      canvas: { hidden: true } 
+     },
+  }}
+/>
+
+# Web Static Server
+---
+
+The Thymio Suite mobile application incorporates a static server to provide offline access to the programming interfaces. This functionality ensures that the web pages needed to program the robot are stored directly within the app, eliminating the need for an internet connection.
+
+## How It Works
+
+The static server utilizes the `@dr.pogodin/react-native-static-server` library, which is detailed in the [original repository](https://www.npmjs.com/package/@dr.pogodin/react-native-static-server) by the developer. This library requires the use of `@dr.pogodin/react-native-fs`, a modification of `react-native-fs` that handles file management for the static server.
+
+### Configuration Requirements
+
+For the library to function properly, consider the following configurations:
+
+1. **Static Files Location**: Static files must be placed in an `assets` directory at the root of the project, not inside the `src` directory. Within `assets`, there should be a `webroot` folder where the programming interfaces are stored.
+2. **Resource Paths**: Each page within `assets/webroot` must include all its resources using relative paths.
+3. **Server Path**: Each instance of the static server object should be provided with the server's host path, not the relative file system path.
+
+The server is initialized in the `src/App.tsx` file:
+
+```javascript
+const [server, setServer] = useState<StaticServer | null>(
+  new StaticServer({
+    port: 3000,
+    fileDir: resolveAssetsPath('webroot'),
+    errorLog: true,
+    stopInBackground: true,
+  }),
+);
+```
+
+This configuration sets the root path to `http://localhost:3000`.
+
+### Managing Server State
+
+The application must handle the server appropriately based on the app's state. The server should not remain active when the user switches to another app or when the device is inactive but should restart when the user returns:
+
+```javascript
+useEffect(() => {
+  if (appState === 'background') {
+    server?.stop();
+    setLoading(true);
+  }
+
+  if (appState === 'active') {
+    server?.start();
+    setLoading(false);
+  }
+}, [appState, server]);
+```
+
+Furthermore, the application needs to manage scenarios where the server becomes inactive or crashes, to restart it accordingly:
+
+```javascript
+useEffect(() => {
+  if (server) {
+    setTimes(0);
+    server.start().then(url => {
+      setLoading(false);
+    });
+
+    server.addStateListener((state: number) => {
+      console.log('state', STATES[state]);
+
+      if (state === STATES.ACTIVE) {
+        setLoading(false);
+        setState(STATES.ACTIVE);
+      }
+
+      if (state === STATES.STARTING) {
+        setLoading(true);
+        setState(STATES.STARTING);
+        setTimes(0);
+      }
+
+      if (state === STATES.STOPPING) {
+        setState(STATES.STOPPING);
+      }
+
+      if (state === STATES.CRASHED) {
+        setState(STATES.CRASHED);
+        setLoading(true);
+        setTimes(0);
+      }
+
+      if (state === STATES.INACTIVE) {
+        setState(STATES.INACTIVE);
+        setLoading(true);
+        setTimes(0);
+      }
+    });
+  }
+
+  if (server && server.state === STATES.CRASHED) {
+    console.log('server crashed');
+    setLoading(true);
+    setServer(new StaticServer({
+      port: 3000,
+      fileDir: resolveAssetsPath('webroot'),
+      errorLog: true,
+      stopInBackground: false,
+    }));
+    setLoading(false);
+  }
+
+  if (server && server.state === STATES.INACTIVE) {
+    console.log('server inactive');
+    server.start().then(url => {
+      setLoading(false);
+    });
+  }
+}, [server]);
+```
+
+To monitor the server's state, there is a countdown before requesting a resource. If no response is received within 3 seconds, the server is relaunched:
+
+```javascript
+useEffect(() => {
+  const timeout = setTimeout(() => {
+    if (times < 3) {
+      setTimes(times + 1);
+      console.log('times', times);
+    }
+    if (times === 3) {
+      if (STATES[ServerState] === `${STATES.CRASHED}`) {
+        console.log('server crashed');
+        setServer(new StaticServer({
+          port: 3000,
+
+
+          fileDir: resolveAssetsPath('webroot'),
+          errorLog: true,
+          stopInBackground: false,
+        }));
+        setLoading(false);
+      } else if (STATES[ServerState] === `${STATES.INACTIVE}`) {
+        console.log('server inactive');
+        server?.start().then(url => {
+          setLoading(false);
+        });
+      } else {
+        console.log('server active');
+        setLoading(false);
+      }
+    }
+  }, 500);
+```

@@ -50,4 +50,6 @@ export const fr = {
   welcome_message_phone:
     "Pour programmer un robot Thymio, il est nécessaire de posséder au moins un robot Thymio2 connecté à un routeur Thymio2+ ou à un ordinateur relais. Si cela n'est pas possible, vous pouvez utiliser un simulateur disponible dans la Thymio-suite pour PC ou MAC.",
   welcome_continue: 'Continuer vers les langages de programmation',
+  file_exist: 'Fichier déjà existant',
+  file_exist_message: 'Voulez-vous le sauvegarder sous le nom de {{name}} ?',
 };
