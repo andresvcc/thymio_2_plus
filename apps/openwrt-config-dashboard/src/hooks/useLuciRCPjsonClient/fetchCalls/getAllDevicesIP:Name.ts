@@ -1,7 +1,6 @@
 import { Sid } from '..';
 
 function matchesThymioPattern(str: string): boolean {
-  // Expresión regular para coincidir con el patrón 'Thymio-XXXXXX.lan'
   const pattern = /Thymio-[a-zA-Z0-9]+\.lan/;
   return !pattern.test(str);
 }
@@ -55,7 +54,6 @@ export async function getDevices({ sid }: { sid: Sid }): Promise<Array<any>> {
     id: device[1],
   }));
 
-  // fusione macs and devices by id key
   devices.forEach((device: { ip: string; id: string; mac: string; active: boolean }) => {
     const deviceByMac = macs?.find((mac: { mac: string; id: string }) => mac.id === device.id);
     if (device && deviceByMac) {

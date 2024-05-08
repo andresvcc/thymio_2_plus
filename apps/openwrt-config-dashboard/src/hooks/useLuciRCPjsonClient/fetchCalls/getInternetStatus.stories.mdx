@@ -1,0 +1,101 @@
+import { Meta, Description } from '@storybook/addon-docs'
+
+<Meta
+  title="HTTP CAlls/get internet status"
+  parameters={{
+    viewMode: 'docs',
+    previewTabs: {
+      canvas: { hidden: true }
+     },
+  }}
+/>
+
+# Get Internet Status
+
+### API CALL: getInternetStatus
+
+#### Overview
+The `getInternetStatus` function checks if the device has an active internet connection by attempting to reach Google's homepage. It returns a boolean value indicating whether the internet is accessible.
+
+#### Imports
+```javascript
+import axios, { AxiosRequestConfig } from 'axios';
+import { Sid } from '..';
+```
+- **axios**: Used for making HTTP requests.
+- **AxiosRequestConfig**: Type used for configuring the axios request.
+- **Sid**: A type imported from the parent directory, presumably representing session ID or similar credentials.
+
+#### Parameters
+- `sid`: A session identifier of type `Sid`, required to authenticate or manage the session context for the request.
+
+#### Returns
+- **Promise of boolean**: ```Promise<boolean>``` A promise that resolves to `true` if the internet is reachable, otherwise `false`.
+
+#### Function Logic
+1. **Prepare the Request:**
+   - The function constructs a JSON string that includes the command to check internet connectivity by using `wget` to quietly fetch Google's homepage.
+   - The command will print 'true' if the fetch is successful, and 'false' otherwise.
+
+   ```javascript
+   const data = JSON.stringify({
+     method: 'exec',
+     params: ["wget -q --spider http://www.google.com 2>/dev/null && echo 'true' || echo 'false'"],
+   });
+   ```
+
+2. **Configure the Request:**
+   - An axios configuration object is set up, specifying the HTTP method, URL endpoint, headers, data, and timeout for the request.
+
+   ```javascript
+   const config: AxiosRequestConfig = {
+     method: 'post',
+     url: '/cgi-bin/luci/rpc/sys',
+     headers: {
+       'Content-Type': 'application/json',
+     },
+     data: data,
+     timeout: 4000,
+   };
+   ```
+
+3. **Execute the Request and Handle Response:**
+   - The axios library is used to send the configured request asynchronously.
+   - If the HTTP response status is not 200, an error is thrown.
+   - The function checks if the response contains 'true' within the result field to determine internet connectivity.
+
+   ```javascript
+   const response = await axios(config);
+   if (response.status !== 200) {
+     throw new Error('Error fetching getWifiConfigFile');
+   }
+   return response.data.result.includes('true');
+   ```
+
+4. **Error Handling:**
+   - The catch block handles various errors such as axios cancellation due to timeout, server responses indicating failure, no response received, or other axios errors.
+   - In any error scenario, the function returns `false`, indicating no internet connectivity.
+
+   ```javascript
+   catch (error: any) {
+     if (axios.isCancel(error)) {
+       // Request was cancelled due to timeout
+       return false;
+     } else if (error.response) {
+       // Server responded with an error
+       return false;
+     } else if (error.request) {
+       // No response was received
+       return false;
+     } else {
+       // Other errors
+       console.log('Error:', error.message);
+     }
+     return false;
+   }
+   ```
+
+#### Usage Example
+```javascript
+const isConnected = await getInternetStatus({ sid: yourSessionId })
+```

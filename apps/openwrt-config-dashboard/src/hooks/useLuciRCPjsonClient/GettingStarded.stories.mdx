@@ -16,34 +16,12 @@ import { Meta, Description } from '@storybook/addon-docs'
 
 This document provides a detailed guide on using the React hook for managing the state of an XState machine. This hook allows interacting with a state machine defined using the XState library in React applications.
 
-## Imports and Configuration
+## Modules and Configurations
 
 The React hook for managing the state of the XState machine is used to connect React components with state machines defined in XState. First, we import the necessary functions and tools:
 
-```javascript
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { useActor } from '@xstate/react';
-import { Actions, assign, createMachine, DoneInvokeEvent, interpret, send } from 'xstate';
-import { getLoginSid } from './fetchCalls/getLoginToken';
-import { getDevices } from './fetchCalls/getAllDevicesIP:Name';
-import { getWifiStatus } from './fetchCalls/getWifiStatus';
-import { getInternetStatus } from './fetchCalls/getInternetStatus';
-import { ContextData, Event, ServiceEvent, initialState } from '.';
-import { createClient, IGroup, INode, Variables } from '@mobsya-association/thymio-api';
-import { getWifiConfigFile } from './fetchCalls/getWifiConfigFile';
-import { getUptime } from './fetchCalls/getUptime';
-import { getIfStatus } from './fetchCalls/getIfstatus';
-import CryptoJS from 'crypto-js';
-```
-
 | Module or Function        | Description                                                                                                                                                                                                                                      |
 |---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `React`                   | Provides access to core React functions and components, allowing the creation of components and state management in React applications.                                                                                                      |
-| `createContext`           | Creates a React context, enabling data sharing between components without manually passing props through each level of the component tree.                                                                                                      |
-| `useContext`              | Allows accessing the value of the React context in a functional component, enabling consuming the context and using its value anywhere within the component.                                                                                 |
-| `useEffect`               | Enables executing side effects in React components, such as subscriptions to external data, DOM updates, and resource cleanup.                                                                                                                 |
-| `useRef`                  | Creates a mutable reference that persists throughout the component's lifecycle, primarily used for accessing DOM nodes or mutable values without causing additional re-renders.                                                             |
-| `useState`                | Adds local state to functional components in React, allowing declaring state variables within a functional component and updating them using the `setState` method.                                                                        |
 | `useActor`                | Provides access to XState actors in React components, allowing subscribing to changes in actor state and sending events to state machines.                                                                                                   |
 | `Actions`                 | Provides functions and utilities for defining actions within XState machines, representing operations performed in response to events.                                                                                                          |
 | `assign`                  | Defines an action that assigns values to properties of the state machine's context.                                                                                                                                                             |
@@ -319,6 +297,3 @@ export const useEmitter = () => {
 
 Overall, these custom hooks encapsulate the logic for accessing state data, obtaining the current state of the state machine, and sending events to the state machine. They provide convenient abstractions for interacting with the state machine within React components, promoting code reusability and maintainability.
 
-## Conclusion
-
-The React hook for managing the state of the XState machine provides an efficient and straightforward way to interact with state machines in React applications. By following this guide, developers can easily integrate state machine logic into their React components in an organized and efficient manner.
