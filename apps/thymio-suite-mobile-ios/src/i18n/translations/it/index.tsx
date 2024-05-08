@@ -1,0 +1,35 @@
+export const it = {
+  common_loading: 'Caricamento...',
+  title_welcome: 'Benvenuti in Thymio Suite',
+  subtitle_welcome:
+    'Scegli un linguaggio di programmazione per imparare con Thymio',
+  menu_option_1_Thymio2p_configuration: 'Configurazione Thymio2+',
+  menu_option_2_Class_management: 'Gestione della classe',
+  vpl3_error_to_saved_program:
+    'Si è verificato un problema durante il salvataggio del programma',
+  vpl3_confirm_quit1: "Confermare l'uscita",
+  vpl3_confirm_quit2:
+    'Vuoi veramente terminare? \n \n Se esci dal programma perderai tutte le modifiche che non hai salvato. \n \n Salva il programma prima di uscire.',
+  vpl3_save_success: 'Il programma è stato salvato',
+  vpl3_save_continu: 'Puoi continuare',
+  vpl3_quit_calcel: 'Annullare',
+  vpl3_quit_without_save: 'Uscire senza salvare',
+  vpl3_quit_with_save: 'Salva ed esci',
+  vpl3_program_management: 'Gestione dei programmi',
+  vpl3_program_info:
+    'Puoi salvare il programma o caricarne un altro precedentemente salvato.',
+  vpl3_program_save: 'Salva questo programma',
+  vpl3_program_load: 'Caricare un programma',
+  vpl3_program_new: 'Nuovo programma',
+  scratch_quit: 'Uscire',
+  scratch_cancel: 'Annulla',
+  scratch_save_success: 'Il programma è stato salvato',
+  scratch_save_options: 'È possibile continuare o condividere il programma',
+  scratch_save_continue: 'Continua',
+  scratch_save_share: 'Condividi',
+  scratch_saveForm_title: 'Salva programma',
+  scratch_saveForm_info: 'Inserire un nome per il programma Salva',
+  scratch_saveForm_labelButton_save: 'Salva',
+  scratch_saveForm_labelButton_calcel: 'Annulla',
+  thymio2p_scan: 'Scansione',
+};
