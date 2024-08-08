@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useRef, useState } from 'r
 import { useActor } from '@xstate/react';
 import { Actions, assign, createMachine, DoneInvokeEvent, interpret, send } from 'xstate';
 import { getLoginSid } from './fetchCalls/getLoginToken';
-import { getDevices } from './fetchCalls/getAllDevicesIP:Name';
+import { getDevices } from './fetchCalls/getAllDevicesIP_Name';
 import { getWifiStatus } from './fetchCalls/getWifiStatus';
 import { getInternetStatus } from './fetchCalls/getInternetStatus';
 import { ContextData, Event, ServiceEvent, initialState } from '.';
