@@ -256,8 +256,13 @@ const actions = {
     };
   }),
   updateRobots: assign((context: ContextData, event: Event) => {
+
+    const idsRobots = event.data.robots.map((robot:any)=>robot.nodeId)
+    const tempRobots = context.robots.map((robot) => idsRobots.includes(robot.nodeId))
+    const conectedRobots = tempRobots.filter((robot) => robot.status === 'disconected')
+
     return {
-      robots: event.data.robots,
+      robots: conectedRobots,
       times: context.times + 1,
     };
   }),
