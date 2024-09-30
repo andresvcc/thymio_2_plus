@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
@@ -90,7 +91,7 @@ function App({navigation}: any): JSX.Element {
         ))}
       </View>
       <View style={styles.containerFooter}>
-        <Text>Thymio Suite Mobile App v.3.1.3</Text>
+        <Text>Thymio Suite Mobile App v.3.1.5</Text>
       </View>
     </View>
   );
